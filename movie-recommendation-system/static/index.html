@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .movie-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .algorithm-btn {
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .algorithm-btn.active, .input-type-btn.active {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+        }
+        
+        .input-type-btn {
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .genre-badge {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            margin: 0.1rem;
+        }
+        
+        .rating-star {
+            color: #ffd700;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-section {
+            text-align: center;
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: #4ecdc4;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-film text-warning me-3"></i>
+                Movie Recommendation System
+            </h1>
+            <p class="lead">Discover your next favorite movie with AI-powered recommendations</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Control Panel -->
+                <div class="glass-card p-4 mb-4">
+                    <!-- Input Type Selection -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label text-white fw-bold mb-3">
+                                <i class="fas fa-search me-2"></i>What would you like recommendations based on?
+                            </label>
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn input-type-btn active" data-input="movie">
+                                    <i class="fas fa-film me-2"></i>Movie
+                                </button>
+                                <button type="button" class="btn input-type-btn" data-input="genre">
+                                    <i class="fas fa-tags me-2"></i>Genre
+                                </button>
+                                <button type="button" class="btn input-type-btn" data-input="actor">
+                                    <i class="fas fa-user-tie me-2"></i>Actor
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Input Fields -->
+                    <div class="row align-items-end">
+                        <div class="col-md-4">
+                            <!-- Movie Input -->
+                            <div class="input-section" id="movieInput">
+                                <label class="form-label text-white fw-bold">
+                                    <i class="fas fa-film me-2"></i>Movie Name
+                                </label>
+                                <input type="text" class="form-control" id="movieName" 
+                                       placeholder="e.g., The Matrix, Inception..." 
+                                       value="The Matrix">
+                                <small class="text-light">Find movies similar to this one</small>
+                            </div>
+                            
+                            <!-- Genre Input -->
+                            <div class="input-section d-none" id="genreInput">
+                                <label class="form-label text-white fw-bold">
+                                    <i class="fas fa-tags me-2"></i>Genre
+                                </label>
+                                <select class="form-control" id="genreSelect">
+                                    <option value="Action">Action</option>
+                                    <option value="Adventure">Adventure</option>
+                                    <option value="Animation">Animation</option>
+                                    <option value="Comedy">Comedy</option>
+                                    <option value="Crime">Crime</option>
+                                    <option value="Drama" selected>Drama</option>
+                                    <option value="Fantasy">Fantasy</option>
+                                    <option value="Horror">Horror</option>
+                                    <option value="Romance">Romance</option>
+                                    <option value="Sci-Fi">Sci-Fi</option>
+                                    <option value="Thriller">Thriller</option>
+                                </select>
+                                <small class="text-light">Get top movies from this genre</small>
+                            </div>
+                            
+                            <!-- Actor Input -->
+                            <div class="input-section d-none" id="actorInput">
+                                <label class="form-label text-white fw-bold">
+                                    <i class="fas fa-user-tie me-2"></i>Actor Name
+                                </label>
+                                <input type="text" class="form-control" id="actorName" 
+                                       placeholder="e.g., Tom Hanks, Meryl Streep..." 
+                                       value="Tom Hanks">
+                                <small class="text-light">Find movies with this actor (demo)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label class="form-label text-white fw-bold">
+                                <i class="fas fa-list-ol me-2"></i>Count
+                            </label>
+                            <input type="number" class="form-control" id="numRecommendations" value="6" min="1" max="15">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label text-white fw-bold">
+                                <i class="fas fa-cogs me-2"></i>Algorithm
+                            </label>
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn algorithm-btn active" data-algorithm="collaborative">
+                                    Smart
+                                </button>
+                                <button type="button" class="btn algorithm-btn" data-algorithm="svd">
+                                    Advanced
+                                </button>
+                                <button type="button" class="btn algorithm-btn" data-algorithm="kmeans">
+                                    Popular
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label class="form-label text-white">&nbsp;</label>
+                            <button class="btn btn-success w-100 fw-bold" id="getRecommendations">
+                                <i class="fas fa-magic me-2"></i>Get Movies
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="text-center loading-spinner">
+                    <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="text-white mt-3">Finding perfect movies for you...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results" class="row"></div>
+
+                <!-- System Stats -->
+                <div class="glass-card p-4 mt-4">
+                    <h3 class="text-white mb-3">
+                        <i class="fas fa-chart-bar me-2"></i>System Statistics
+                    </h3>
+                    <div class="row" id="systemStats">
+                        <!-- Stats will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="glass-card p-4 mt-4">
+                    <h3 class="text-white mb-4 text-center">
+                        <i class="fas fa-star me-2"></i>Features
+                    </h3>
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h5 class="text-white">Collaborative Filtering</h5>
+                            <p class="text-light">Find movies based on similar users' preferences</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h5 class="text-white">Matrix Factorization</h5>
+                            <p class="text-light">Advanced SVD algorithm for precise recommendations</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="feature-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <h5 class="text-white">User Clustering</h5>
+                            <p class="text-light">Discover movies through user group analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        // Algorithm selection
+        document.querySelectorAll('.algorithm-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.algorithm-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Input type selection
+        document.querySelectorAll('.input-type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.input-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show/hide input sections
+                document.querySelectorAll('.input-section').forEach(section => {
+                    section.classList.add('d-none');
+                });
+                
+                const inputType = this.dataset.input;
+                document.getElementById(inputType + 'Input').classList.remove('d-none');
+            });
+        });
+
+        // Get recommendations
+        document.getElementById('getRecommendations').addEventListener('click', async function() {
+            const numRecommendations = document.getElementById('numRecommendations').value;
+            const algorithm = document.querySelector('.algorithm-btn.active').dataset.algorithm;
+            const inputType = document.querySelector('.input-type-btn.active').dataset.input;
+            
+            // Prepare request body based on input type
+            let requestBody = {
+                num_recommendations: parseInt(numRecommendations),
+                algorithm: algorithm
+            };
+            
+            if (inputType === 'movie') {
+                const movieName = document.getElementById('movieName').value.trim();
+                if (!movieName) {
+                    alert('Please enter a movie name');
+                    return;
+                }
+                requestBody.movie_name = movieName;
+            } else if (inputType === 'genre') {
+                requestBody.genre = document.getElementById('genreSelect').value;
+            } else if (inputType === 'actor') {
+                const actorName = document.getElementById('actorName').value.trim();
+                if (!actorName) {
+                    alert('Please enter an actor name');
+                    return;
+                }
+                requestBody.actor_name = actorName;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await fetch(`${API_BASE}/recommend`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayRecommendations(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error getting recommendations: ${error.message}
+                        </div>
+                    </div>
+                `;
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        function showLoading(show) {
+            const spinner = document.querySelector('.loading-spinner');
+            const results = document.getElementById('results');
+            
+            if (show) {
+                spinner.style.display = 'block';
+                results.innerHTML = '';
+            } else {
+                spinner.style.display = 'none';
+            }
+        }
+
+        function displayRecommendations(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            const inputIcon = data.input_type === 'movie' ? 'fas fa-film' : 
+                             data.input_type === 'genre' ? 'fas fa-tags' : 'fas fa-user-tie';
+            
+            let html = `
+                <div class="col-12 mb-4">
+                    <div class="glass-card p-3">
+                        <div class="row text-white">
+                            <div class="col-md-3">
+                                <strong><i class="${inputIcon} me-2"></i>${data.input_type.charAt(0).toUpperCase() + data.input_type.slice(1)}:</strong> ${data.input_value}
+                            </div>
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-robot me-2"></i>Algorithm:</strong> ${data.algorithm_used}
+                            </div>
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-bullseye me-2"></i>Confidence:</strong> ${(data.accuracy_score * 100).toFixed(1)}%
+                            </div>
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-clock me-2"></i>Time:</strong> ${data.execution_time_ms}ms
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            data.recommendations.forEach((movie, index) => {
+                const stars = generateStars(movie.predicted_rating);
+                const genres = movie.genres.map(genre => 
+                    `<span class="badge genre-badge">${genre}</span>`
+                ).join(' ');
+                
+                html += `
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card movie-card h-100">
+                            <div class="card-header bg-primary text-white text-center">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-trophy me-2"></i>
+                                    Recommendation #${index + 1}
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-primary mb-3">
+                                    <i class="fas fa-film me-2"></i>${movie.title}
+                                </h5>
+                                <div class="mb-2">
+                                    <strong>Year:</strong> 
+                                    <span class="badge bg-secondary">${movie.year || 'Unknown'}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Genres:</strong><br>
+                                    ${genres}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Predicted Rating:</strong>
+                                    <div class="d-flex align-items-center">
+                                        ${stars}
+                                        <span class="ms-2 fw-bold text-primary">${movie.predicted_rating}/5.0</span>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Confidence:</strong>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-success" 
+                                             style="width: ${movie.confidence_score * 100}%">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">${(movie.confidence_score * 100).toFixed(1)}%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star rating-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt rating-star"></i>';
+            }
+            
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star rating-star"></i>';
+            }
+            
+            return stars;
+        }
+
+        // Load system stats on page load
+        async function loadSystemStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const stats = await response.json();
+                
+                const statsDiv = document.getElementById('systemStats');
+                statsDiv.innerHTML = `
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <i class="fas fa-film fa-2x mb-2"></i>
+                            <h4>${stats.total_movies}</h4>
+                            <p class="mb-0">Movies</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <i class="fas fa-star fa-2x mb-2"></i>
+                            <h4>${stats.total_ratings}</h4>
+                            <p class="mb-0">Ratings</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <h4>${stats.total_users}</h4>
+                            <p class="mb-0">Users</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <h4>${stats.average_rating}</h4>
+                            <p class="mb-0">Avg Rating</p>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load stats when page loads
+        loadSystemStats();
+
+        // Auto-load recommendations for user 1
+        setTimeout(() => {
+            document.getElementById('getRecommendations').click();
+        }, 1000);
+    </script>
+</body>
+</html>

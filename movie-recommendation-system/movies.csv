@@ -1,0 +1,21 @@
+movie_id,title,genres,year
+1,The Shawshank Redemption,['Drama'],1994
+2,The Godfather,"['Crime', 'Drama']",1972
+3,The Dark Knight,"['Action', 'Crime', 'Drama']",2008
+4,Pulp Fiction,"['Crime', 'Drama']",1994
+5,Forrest Gump,"['Drama', 'Romance']",1994
+6,Inception,"['Action', 'Sci-Fi', 'Thriller']",2010
+7,The Matrix,"['Action', 'Sci-Fi']",1999
+8,Goodfellas,"['Biography', 'Crime', 'Drama']",1990
+9,The Lord of the Rings: The Return of the King,"['Adventure', 'Drama', 'Fantasy']",2003
+10,Fight Club,['Drama'],1999
+11,Star Wars: Episode IV - A New Hope,"['Adventure', 'Fantasy', 'Sci-Fi']",1977
+12,The Lord of the Rings: The Fellowship of the Ring,"['Adventure', 'Drama', 'Fantasy']",2001
+13,One Flew Over the Cuckoo's Nest,['Drama'],1975
+14,Goodfellas,"['Biography', 'Crime', 'Drama']",1990
+15,Seven Samurai,"['Adventure', 'Drama']",1954
+16,City of God,"['Crime', 'Drama']",2002
+17,Life Is Beautiful,"['Comedy', 'Drama', 'Romance']",1997
+18,The Silence of the Lambs,"['Crime', 'Drama', 'Thriller']",1991
+19,It's a Wonderful Life,"['Drama', 'Family', 'Fantasy']",1946
+20,Spirited Away,"['Animation', 'Adventure', 'Family']",2001
