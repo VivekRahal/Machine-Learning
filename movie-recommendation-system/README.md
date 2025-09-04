@@ -1,5 +1,11 @@
 # 🎬 Movie Recommendation System
 
+
+
+
+
+
+
 A modern, user-friendly movie recommendation system that accepts **movie names**, **genres**, and **actor names** as input instead of confusing user IDs. Built with FastAPI and clean OOP principles.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
